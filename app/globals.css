@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 1rem;
+  --background: oklch(1 0 0);
+  --surface: oklch(0.985 0.006 152);
+  --foreground: oklch(0.19 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.02 260);
+  --primary: oklch(0.72 0.18 148);
+  --primary-foreground: oklch(1 0 0);
+  --primary-dark: oklch(0.52 0.16 148);
+  --primary-glow: oklch(0.82 0.19 148);
+  --secondary: oklch(0.97 0.02 152);
+  --secondary-foreground: oklch(0.24 0.05 152);
+  --muted: oklch(0.97 0.008 152);
+  --muted-foreground: oklch(0.55 0.02 260);
+  --accent: oklch(0.94 0.05 152);
+  --accent-foreground: oklch(0.32 0.09 148);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.008 260);
+  --input: oklch(0.92 0.008 260);
+  --ring: oklch(0.72 0.18 148);
+
+  /* Raw variables referenced directly by components via var(...) in arbitrary
+     Tailwind values (e.g. bg-[color:var(--color-surface)], shadow-[var(--shadow-soft)]).
+     These mirror what Tailwind v4's @theme inline block auto-generated in the
+     original Lovable project — Tailwind v3 does not create these automatically. */
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --shadow-soft: 0 4px 20px -8px rgba(21, 128, 61, 0.15);
+  --shadow-glass: 0 20px 60px -20px rgba(21, 128, 61, 0.18);
+  --shadow-glow: 0 0 40px rgba(74, 222, 128, 0.35);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-card {
+    background: color-mix(in oklab, white 75%, transparent);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid color-mix(in oklab, white 60%, transparent);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .glass-nav {
+    background: color-mix(in oklab, white 70%, transparent);
+    backdrop-filter: blur(16px) saturate(180%);
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  }
+
+  .text-gradient-green {
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 60%, #4ade80 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ============================================================
+     Animated hero background — left & right gradients flow inward
+     and settle into a gentle infinite floating motion, while
+     leaving the center (headline/body/buttons) clear for contrast.
+     Used across all pages via the shared .bg-hero-mesh class.
+     ============================================================ */
+  .bg-hero-mesh {
+    position: relative;
+    isolation: isolate; /* own stacking context so z-index:-1 pseudo-elements stay behind content */
+    overflow: hidden;
+    background-color: #ffffff;
+  }
+
+  .bg-hero-mesh::before,
+  .bg-hero-mesh::after {
+    content: "";
+    position: absolute;
+    top: -25%;           /* stretches up over the navbar area */
+    height: 150%;
+    width: 62%;           /* wider spread so it reaches further toward center */
+    z-index: -1;
+    pointer-events: none;
+    filter: blur(70px);
+    opacity: 0;
+  }
+
+  /* Multi-stop gradients: strong color near the edge, gradually
+     lightening as it approaches the center so the text zone stays
+     readable while the color still visually reaches toward the middle. */
+  .bg-hero-mesh::before {
+    left: -10%;
+    background: radial-gradient(
+      ellipse 75% 65% at 25% 35%,
+      rgba(74, 222, 128, 0.55) 0%,
+      rgba(34, 197, 94, 0.38) 30%,
+      rgba(74, 222, 128, 0.2) 55%,
+      rgba(74, 222, 128, 0.1) 72%,
+      rgba(74, 222, 128, 0.05) 100%
+    );
+    animation:
+      hero-fade-in-left 1.4s ease-out forwards,
+      hero-float-left 12s ease-in-out infinite 1.4s;
+  }
+
+  .bg-hero-mesh::after {
+    right: -10%;
+    background: radial-gradient(
+      ellipse 75% 65% at 75% 45%,
+      rgba(21, 128, 61, 0.5) 0%,
+      rgba(34, 197, 94, 0.36) 30%,
+      rgba(34, 197, 94, 0.18) 55%,
+      rgba(34, 197, 94, 0.1) 72%,
+      rgba(34, 197, 94, 0.05) 100%
+    );
+    animation:
+      hero-fade-in-right 1.4s ease-out 0.25s forwards,
+      hero-float-right 13s ease-in-out infinite 1.65s;
+  }
+
+  @keyframes hero-fade-in-left {
+    from { opacity: 0; transform: translateX(-6%); }
+    to   { opacity: 1; transform: translateX(10%); }
+  }
+
+  @keyframes hero-fade-in-right {
+    from { opacity: 0; transform: translateX(6%); }
+    to   { opacity: 1; transform: translateX(-10%); }
+  }
+
+  @keyframes hero-float-left {
+    0%, 100% { transform: translate(10%, 0); }
+    50%      { transform: translate(7%, -3%); }
+  }
+
+  @keyframes hero-float-right {
+    0%, 100% { transform: translate(-10%, 0); }
+    50%      { transform: translate(-7%, 3%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-hero-mesh::before,
+    .bg-hero-mesh::after {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(21, 128, 61, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(21, 128, 61, 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  
+}
